@@ -25,6 +25,7 @@
       "googleServicesFile": "./GoogleService-Info.plist"
     },
     "android": {
+      "versionCode": "5",
       "package": "com.aimee",
       "googleServicesFile": "./google-services.json"
     },
