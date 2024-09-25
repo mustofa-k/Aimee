@@ -40,7 +40,7 @@ const RoleUsers = ({ navigation }) => {
     try {
       updateRole('Investor');
     } catch (error) {}
-    navigation.navigate('AddInvestor');
+    navigation.navigate('startupMatching');
   };
   const navigateToDigitalTalent = async () => {
     try {
@@ -77,7 +77,7 @@ const RoleUsers = ({ navigation }) => {
       </View>
       <View>
         <Text style={{ textAlign: 'center', marginTop: 20 }}>
-          Select your role 🚀{' '}
+          Select your role🚀{' '}
         </Text>
       </View>
     </SafeAreaView>

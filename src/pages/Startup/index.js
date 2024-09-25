@@ -4,13 +4,19 @@ import {
 } from 'expo-status-bar';
 
 import { useAuth } from '../../hooks/useAuth';
-import { collection, onSnapshot, query, orderBy } from "firebase/firestore";
+import { collection, onSnapshot, query, orderBy } from 'firebase/firestore';
 import { db } from '../../../firebase';
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, View, Text, FlatList, Pressable, Image } from 'react-native';
+import {
+  StyleSheet,
+  View,
+  Text,
+  FlatList,
+  Pressable,
+  Image,
+} from 'react-native';
 import { useTheme, TextInput, Appbar } from 'react-native-paper';
 import Container from '../../layout/Container';
-
 
 const Search = () => {
   const { colors } = useTheme();
@@ -36,23 +42,23 @@ const Search = () => {
 const Startup = ({ navigation }) => {
   const { colors } = useTheme();
   const [searchQuery, setSearchQuery] = useState('');
-	const [startuplist, setStartupList] = useState([]);
-  const {role} = useAuth();
+  const [startuplist, setStartupList] = useState([]);
+  const { role } = useAuth();
 
   const [filteredStartup, setFilteredStartup] = useState(startuplist);
-	
+
   useEffect(() => {
-    console.log(startuplist)
+    console.log(startuplist);
     setFilteredStartup(startuplist);
-  }, [startuplist])
+  }, [startuplist]);
 
   useEffect(() => {
     setFilteredStartup(
-      startuplist.filter(startup =>
+      startuplist.filter((startup) =>
         startup.name.toLowerCase().includes(searchQuery.toLowerCase())
       )
-    )
-  },[searchQuery])
+    );
+  }, [searchQuery]);
 
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
@@ -64,20 +70,20 @@ const Startup = ({ navigation }) => {
   }, [navigation]);
 
   useEffect(() => {
-		const dbRef = collection(db, "StartupList");
+    const dbRef = collection(db, 'StartupList');
 
-		const q = query(dbRef, orderBy("name", "asc"));
+    const q = query(dbRef, orderBy('name', 'asc'));
 
-		const unsubscribe = onSnapshot(q, (querySnapshot) => {
-			setStartupList(
-				querySnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id }))
-			);
-		});
+    const unsubscribe = onSnapshot(q, (querySnapshot) => {
+      setStartupList(
+        querySnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id }))
+      );
+    });
 
-		return unsubscribe;
-	}, []);
+    return unsubscribe;
+  }, []);
 
-  const handleSearchChange = query => {
+  const handleSearchChange = (query) => {
     setSearchQuery(query);
   };
 
@@ -95,10 +101,12 @@ const Startup = ({ navigation }) => {
         />
         <Appbar.Content title="Startup" />
         {role === 'Startupreneur' && (
-          <Appbar.Action icon="plus" size={30} onPress={() =>
-            navigation.navigate('AddStartup')}/>
+          <Appbar.Action
+            icon="plus"
+            size={30}
+            onPress={() => navigation.navigate('AddStartup')}
+          />
         )}
-        
       </Appbar.Header>
 
       <View
@@ -123,30 +131,30 @@ const Startup = ({ navigation }) => {
           />
         </Container>
         <FlatList
-					style={{ height: "78%" }}
-					data={filteredStartup}
-					numColumns={1}
-					renderItem={({ item }) => (
-						<Pressable
-							onPress={() =>
-								navigation.navigate("StartupDetails", {
-									data: item,
-								})
-							}
-							style={({ pressed }) => [
-								styles.button,
-								{
-									backgroundColor: pressed ? "#dfedfa" : "#fff",
-									opacity: pressed ? 0.5 : 1,
-									margin: 5,
-									padding: 0,
-									borderRadius: 10,
-									alignItems: "center",
-									elevation: 5,
-								},
-							]}
-						>
-                <View style={styles.container}>
+          style={{ height: '78%' }}
+          data={filteredStartup}
+          numColumns={1}
+          renderItem={({ item }) => (
+            <Pressable
+              onPress={() =>
+                navigation.navigate('StartupDetails', {
+                  data: item,
+                })
+              }
+              style={({ pressed }) => [
+                styles.button,
+                {
+                  backgroundColor: pressed ? '#dfedfa' : '#fff',
+                  opacity: pressed ? 0.5 : 1,
+                  margin: 5,
+                  padding: 0,
+                  borderRadius: 10,
+                  alignItems: 'center',
+                  elevation: 5,
+                },
+              ]}
+            >
+              <View style={styles.container}>
                 <View>
                   <Image
                     source={{ uri: item.image }}
@@ -175,22 +183,20 @@ const Startup = ({ navigation }) => {
                   </View>
                 </View>
               </View>
-						</Pressable>
-					)}
-					keyExtractor={(item) => item.id}
-				/>
+            </Pressable>
+          )}
+          keyExtractor={(item) => item.id}
+        />
       </View>
     </>
   );
 };
 
-
-
 export default Startup;
 
 const styles = StyleSheet.create({
   searchIcon: { top: 2 },
-  scrolViewContent: { paddingBottom: 16, flexGrow: 1, },
+  scrolViewContent: { paddingBottom: 16, flexGrow: 1 },
   lockedButtonContainer: {
     position: 'absolute',
     bottom: 0,

@@ -46,6 +46,9 @@ import AboutApp from './src/pages/AboutApp';
 import Dashboard from './src/pages/DashboardTableau';
 import RoleUsers from './src/pages/SelectRole';
 
+import StartupMatchingPage from './src/pages/StartupMatching/Index';
+import { FilterProvider } from './src/context/FilterContext';
+
 GoogleSignin.configure({
   webClientId:
     '361835717642-b6m0q4okrda0j9f6rt7il544fsasgkjf.apps.googleusercontent.com',
@@ -64,56 +67,62 @@ const StackNavigation = () => {
 
   return (
     <IntlProvider>
-      <Stack.Navigator
-        initialRouteName="Login"
-        screenOptions={{ headerShown: false }}
-      >
-        {!auth.initialized && (
-          <Stack.Screen name="Loading" component={Loading} />
-        )}
+      <FilterProvider>
+        <Stack.Navigator
+          initialRouteName="Login"
+          screenOptions={{ headerShown: false }}
+        >
+          {!auth.initialized && (
+            <Stack.Screen name="Loading" component={Loading} />
+          )}
 
-        {!auth.user && auth.initialized && (
-          <>
-            <Stack.Screen name="Login" component={Login} />
-            <Stack.Screen name="Register" component={Register} />
-            <Stack.Screen name="ForgotPassword" component={ForgotPassword} />
-          </>
-        )}
+          {!auth.user && auth.initialized && (
+            <>
+              <Stack.Screen name="Login" component={Login} />
+              <Stack.Screen name="Register" component={Register} />
+              <Stack.Screen name="ForgotPassword" component={ForgotPassword} />
+            </>
+          )}
 
-        {auth.user && auth.initialized && (
-          <>
-            <Stack.Screen name="SelectRole" component={RoleUsers} />
-            <Stack.Screen name="Home" component={Home} />
-            <Stack.Screen name="Program" component={Program} />
-            <Stack.Screen name="AllSeminar" component={AllSeminar} />
-            <Stack.Screen name="AllSharing" component={AllSharing} />
-            <Stack.Screen name="AllClass" component={AllClass} />
-            <Stack.Screen name="AllBlogNews" component={AllBlogNews} />
-            <Stack.Screen name="Mentor" component={Mentor} />
-            <Stack.Screen name="Matchmaking" component={Matchmaking} />
-            <Stack.Screen name="Startup" component={Startup} />
-            <Stack.Screen name="Mitra" component={Mitra} />
-            <Stack.Screen name="PlayVideo" component={PlayVideo} />
-            <Stack.Screen name="ViewBlog" component={ViewBlog} />
-            <Stack.Screen name="AddStartup" component={AddStartup} />
-            <Stack.Screen name="AddInvestor" component={AddInvestor} />
-            <Stack.Screen name="AddTalent" component={AddTalent} />
-            <Stack.Screen name="StartupDetails" component={StartupDetails} />
-            <Stack.Screen name="MatchingPage" component={MatchingPage} />
-            <Stack.Screen name="EditProfile" component={EditProfile} />
-            <Stack.Screen name="StartupMatch" component={StartupMatch} />
-            <Stack.Screen
-              name="StartupMatchDetails"
-              component={StartupMatchDetails}
-            />
-            <Stack.Screen name="UpdateDetail" component={UpdateDetail} />
-            <Stack.Screen name="ChangePassword" component={ChangePassword} />
-            <Stack.Screen name="Profile" component={Profile} />
-            <Stack.Screen name="AboutApp" component={AboutApp} />
-            <Stack.Screen name="Dashboard" component={Dashboard} />
-          </>
-        )}
-      </Stack.Navigator>
+          {auth.user && auth.initialized && (
+            <>
+              <Stack.Screen name="SelectRole" component={RoleUsers} />
+              <Stack.Screen name="Home" component={Home} />
+              <Stack.Screen name="Program" component={Program} />
+              <Stack.Screen name="AllSeminar" component={AllSeminar} />
+              <Stack.Screen name="AllSharing" component={AllSharing} />
+              <Stack.Screen name="AllClass" component={AllClass} />
+              <Stack.Screen name="AllBlogNews" component={AllBlogNews} />
+              <Stack.Screen name="Mentor" component={Mentor} />
+              <Stack.Screen name="Matchmaking" component={Matchmaking} />
+              <Stack.Screen name="Startup" component={Startup} />
+              <Stack.Screen name="Mitra" component={Mitra} />
+              <Stack.Screen name="PlayVideo" component={PlayVideo} />
+              <Stack.Screen name="ViewBlog" component={ViewBlog} />
+              <Stack.Screen name="AddStartup" component={AddStartup} />
+              <Stack.Screen name="AddInvestor" component={AddInvestor} />
+              <Stack.Screen name="AddTalent" component={AddTalent} />
+              <Stack.Screen name="StartupDetails" component={StartupDetails} />
+              <Stack.Screen name="MatchingPage" component={MatchingPage} />
+              <Stack.Screen name="EditProfile" component={EditProfile} />
+              <Stack.Screen name="StartupMatch" component={StartupMatch} />
+              <Stack.Screen
+                name="startupMatching"
+                component={StartupMatchingPage}
+              />
+              <Stack.Screen
+                name="StartupMatchDetails"
+                component={StartupMatchDetails}
+              />
+              <Stack.Screen name="UpdateDetail" component={UpdateDetail} />
+              <Stack.Screen name="ChangePassword" component={ChangePassword} />
+              <Stack.Screen name="Profile" component={Profile} />
+              <Stack.Screen name="AboutApp" component={AboutApp} />
+              <Stack.Screen name="Dashboard" component={Dashboard} />
+            </>
+          )}
+        </Stack.Navigator>
+      </FilterProvider>
     </IntlProvider>
   );
 };

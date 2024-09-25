@@ -1,206 +1,96 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { 
-  StyleSheet,
-  View,
-  Text,
-  Image, SafeAreaView} from 'react-native';
+import React, { useContext, useRef, useState } from 'react';
+import { StyleSheet, View, Text, Image, SafeAreaView } from 'react-native';
 import { Appbar, useTheme } from 'react-native-paper';
-import Swiper from 'react-native-deck-swiper';;
-import { db } from '../../../firebase';
-import { collection, doc, getDoc, getDocs, onSnapshot, query, setDoc, where } from 'firebase/firestore';
-import { TouchableOpacity } from 'react-native-gesture-handler';
-import { AntDesign } from '@expo/vector-icons';
-import { useAuth } from '../../hooks/useAuth';
+import Swiper from 'react-native-deck-swiper';
+import { FilterContext } from '../../context/FilterContext'; // Import FilterContext
 
-const MatchingPage = ({ route, navigation }) => {
-  const { user } = useAuth();
+const StartupPage = ({ navigation }) => {
   const { colors } = useTheme();
-  const [startup, setStartup] = useState([]);
-  const [errorMessage, setErrorMessage] = useState('');
-  const swipeRef = useRef(null);
-  const provinsi = new Map([
-    ['Kalimantan Selatan', 0],
-    ['Aceh', 1],
-    ['Bali', 2],
-    ['Banten', 3],
-    ['Bengkulu', 4],
-    ['DI Yogyakarta', 5],
-    ['DKI Jakarta', 6],
-    ['Gorontalo', 7],
-    ['Jambi', 8],
-    ['Jawa Barat', 9],
-    ['Jawa Tengah', 10],
-    ['Jawa Timur', 11],
-    ['Kalimantan Barat', 12],
-    ['Kalimantan Selatan', 13],
-    ['Kalimantan Tengah', 14],
-    ['Kalimantan Timur', 15],
-    ['Kalimantan Utara', 16],
-    ['Kepulauan Bangka Belitung', 17],
-    ['Kepulauan Riau', 18],
-    ['Lampung', 19],
-    ['Maluku', 20],
-    ['Maluku Utara', 21],
-    ['Nusa Tenggara Barat', 22],
-    ['Nusa Tenggara Timur', 23],
-    ['Riau', 24],
-    ['Sulawesi Barat', 25],
-    ['Sulawesi Selatan', 26],
-    ['Sulawesi Tengah', 27],
-    ['Sulawesi Tenggara', 28],
-    ['Sulawesi Utara', 29],
-    ['Sumatera Selatan', 30],
-    ['Sumatera Utara', 31]
-]);
-const industrySector = new Map([
-    ['Agriculture', 0],
-    ['Aquaculture', 1],
-    ['Beauty', 2],
-    ['Blockchain', 3],
-    ['Consultant Services', 4],
-    ['Digital Business Development', 5],
-    ['EduTech', 6],
-    ['Electronic', 7],
-    ['Energy Distribution', 8],
-    ['Farms', 9],
-    ['Fashion', 10],
-    ['Fisheries', 11],
-    ['Food and Beverage', 12],
-    ['Food Processing', 13],
-    ['Graphic Design and Creative', 14],
-    ['Green Technology', 15],
-    ['Herbs', 16],
-    ['Hospitality', 17],
-    ['Internet', 18],
-    ['Open Journal System', 19],
-    ['Petshop', 20],
-    ['Production', 21],
-    ['Retail', 22],
-    ['Services', 23],
-    ['Sport and Music', 24],
-    ['Technology and Information', 25],
-    ['Textile', 26]
-]);
+  const { filteredData } = useContext(FilterContext); // Akses filteredData dari context
+  const swipeRef = useRef(null); // Referensi untuk Swiper
+  const [startup, setStartup] = useState([...filteredData]);
 
-  useEffect(() => {
-    refreshData()
-    fetchDoc()
-  }, []);
-
-  const fetchDoc = async () => {
-    const docRef = doc(db, 'InvestorList', user.uid);
-    try {
-      const docSnap = await getDoc(docRef);
-      if (docSnap.exists()) {
-        const dt = docSnap.data();
-        fetch('https://aimee.pythonanywhere.com/api/' + provinsi.get(dt.provinsi) + '/' + industrySector.get(dt.sektorIndustri))
-        .then(response => {
-          return response.json();
-        })
-        .then(data => {
-          setStartup(data);
-        })
-      } else {
-        // doc.data() will be undefined in this case
-        console.log("No such document!");
-      }
-    } catch (error) {
-      console.error("Error fetching document: ", error);
+  const handleCardPress = (cardIndex) => {
+    const card = startup[cardIndex];
+    if (!card) {
+      console.error('No card data available'); // Debug untuk memastikan data card ada
+      return;
     }
+    // Debugging untuk melihat apakah navigasi dipanggil
+    navigation.navigate('StartupMatchDetails', { startup: card });
   };
 
-  const refreshData = () => {
-    fetchDoc();
-  };
-
-  const swipeLeftHandler = async (index) => {
-    if(!startup[index]) return;
-
-    const userSkipped = startup[index]
-
-    setDoc(doc(db, 'users', user.uid, "skipped", userSkipped.id), userSkipped)
-
-  }
-
-  const swipeRightHandler = async (index) => {
-    if(!startup[index]) return;
-
-    const userMatched = startup[index]
-
-    setDoc(doc(db, 'users', user.uid, "matched", userMatched.id), userMatched)
-
-  }
-
-    return (
-      <>
-        <Appbar.Header
-          style={{
-            backgroundColor: colors.surface,
+  return (
+    <>
+      <Appbar.Header style={{ backgroundColor: colors.surface }}>
+        <Appbar.BackAction onPress={() => navigation.goBack()} />
+        <Appbar.Content title="Startup Match" />
+        <Appbar.Action
+          icon="refresh"
+          onPress={() => {
+            swipeRef.current.jumpToCardIndex(0); // Mengulang swiper dari kartu pertama
+            setStartup([...filteredData]); // Set state dengan array baru
           }}
-        >
-          <Appbar.Content title="Matchmaking" />
-          <Appbar.Action icon="puzzle-check" size={30} onPress={() =>
-            navigation.navigate('StartupMatch')}/>
-          <Appbar.Action icon="refresh" onPress={refreshData} />
-        </Appbar.Header>
-        <SafeAreaView style={styles.container}>
+        />
+      </Appbar.Header>
+      <SafeAreaView style={styles.container}>
         <View style={styles.flex}>
-          {errorMessage ? (
-          <View style={styles.errorMessageContainer}>
-            <Text style={styles.errorMessage}>{errorMessage}</Text>
-          </View>
+          {startup.length === 0 ? (
+            <View style={styles.errorMessageContainer}>
+              <Text style={styles.errorMessage}>
+                No matching startups found
+              </Text>
+            </View>
           ) : (
-            <Swiper ref={swipeRef}
-            containerStyle={{backgroundColor: "transparent"}}
-            cards={startup}
-            renderCard={(card) => card ? (card&&
-              <View key={card.id} style={styles.card}>
-                <Image style={styles.image} source={{ uri: card.image }} />
-                <View style={styles.textContainer}>
-                  <Text style={styles.text}>{card.provinsi}</Text>
-                  <Text style={styles.title}>Industry Sector</Text>
-                  <Text style={styles.text}>{card.sektorIndustri}</Text>
-                  <Text style={styles.title}>Business Model</Text>
-                  <Text style={styles.text}>{card.modelBisnis}</Text>
-                  <Text style={styles.title}>Required Funds</Text>
-                  <Text style={styles.text}>{card.pendanaan}</Text>
-                </View>
-              </View>
-            ) || null : (
-              <View style={styles.card}>
-                <Text style={styles.message}>No more Startup</Text>
-              </View>
-            )}
-            backgroundColor={'#fff'}
-            stackSize={5}
-            cardIndex={0}
-            animateCardOpacity
-            verticalSwipe={false}
-            onSwipedLeft={(index) => {
-              console.log("Skip")
-              swipeLeftHandler(index)
-            }}
-            onSwipedRight={(index)=> {
-              console.log("Yeah")
-              swipeRightHandler(index)
-            }}
+            <Swiper
+              ref={swipeRef}
+              containerStyle={{ backgroundColor: 'transparent' }}
+              cards={startup}
+              renderCard={(card) =>
+                card ? (
+                  <View key={card.id} style={styles.card}>
+                    <Image style={styles.image} source={{ uri: card.image }} />
+                    <View style={styles.textContainer}>
+                      <Text style={styles.text}>{card.name}</Text>
+                    </View>
+                    <View style={styles.matchPercentageContainer}>
+                      <Text style={styles.matchPercentageText}>
+                        {parseFloat(card.matchPercentage).toFixed(2)}%
+                      </Text>
+                    </View>
+                  </View>
+                ) : (
+                  <View style={styles.card}>
+                    <Text style={styles.message}>No more Startups</Text>
+                  </View>
+                )
+              }
+              backgroundColor={'#fff'}
+              stackSize={5}
+              cardIndex={0}
+              animateCardOpacity
+              verticalSwipe={true} // Aktifkan kembali swipe vertikal jika diperlukan
+              horizontalSwipe={true} // Aktifkan kembali swipe horizontal
+              disableBottomSwipe={true} // Nonaktifkan swipe ke bawah
+              disableTopSwipe={true} // Nonaktifkan swipe ke atas
+              onTapCard={(cardIndex) => handleCardPress(cardIndex)} // Gunakan onTapCard untuk menangani klik
             />
           )}
         </View>
-        </SafeAreaView>
-        
-      </>
-)};
+      </SafeAreaView>
+    </>
+  );
+};
 
 const styles = StyleSheet.create({
   textContainer: {
     position: 'absolute',
     bottom: 0,
-    backgroundColor: "green",
-    justifyContent: "center",
-    alignItems: "center",
-    width: "100%",
-    height: "40%",
+    backgroundColor: 'green',
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: '100%',
+    height: '40%',
     borderBottomRightRadius: 20,
     borderBottomLeftRadius: 20,
     paddingBottom: 10,
@@ -208,20 +98,6 @@ const styles = StyleSheet.create({
   message: {
     fontSize: 25,
     fontWeight: 'bold',
-  },
-  button: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    width: 64,
-    height: 64,
-    borderRadius: 32,
-    backgroundColor: 'lightgrey',
-  },
-  buttonContainer: {
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'space-evenly',
-    marginBottom: 20,
   },
   container: {
     flex: 1,
@@ -235,27 +111,27 @@ const styles = StyleSheet.create({
     position: 'relative',
     borderRadius: 20,
     borderWidth: 2,
-    height: "90%",
-    borderColor: "#E8E8E8",
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "white",
+    height: '90%',
+    borderColor: '#E8E8E8',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'white',
     elevation: 3,
   },
   name: {
     fontSize: 25,
     fontWeight: 'bold',
-    color: "white",
+    color: 'white',
     marginVertical: 5,
   },
   text: {
-    fontSize: 18,
+    fontSize: 30,
     color: 'lightgrey',
   },
   title: {
     fontSize: 20,
     fontWeight: '400',
-    color: "#fff",
+    color: '#fff',
   },
   image: {
     position: 'absolute',
@@ -273,6 +149,18 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  matchPercentageContainer: {
+    position: 'absolute',
+    top: 2,
+    right: 10,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+  },
+  matchPercentageText: {
+    fontSize: 18,
+    color: 'red',
+    fontWeight: 'bold',
+  },
 });
 
-export default MatchingPage;
+export default StartupPage;

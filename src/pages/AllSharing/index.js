@@ -21,18 +21,20 @@ const AllSharing = ({ navigation }) => {
   };
 
   useEffect(() => {
-    const dbRef = collection(db, "SharingSantaii");
-  
-    const q = query(dbRef, orderBy("title", "asc"));
-  
+    const dbRef = collection(db, 'SharingSantaii');
+
+    const q = query(dbRef, orderBy('title', 'asc'));
+
     const unsubscribe = onSnapshot(q, (querySnapshot) => {
-        setSharingSantaii(querySnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+      setSharingSantaii(
+        querySnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id }))
+      );
     });
     return unsubscribe;
   }, []);
 
   const SHARINGSANTAII = sharingSantaii?.map((doc) => {
-    return createVid(doc.id, doc.title, doc.description);
+    return createVid(doc.idyt, doc.title, doc.description);
   });
 
   const SECTIONS = [

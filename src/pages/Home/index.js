@@ -3,14 +3,15 @@ import { useTheme } from 'react-native-paper';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useAuth } from '../../hooks/useAuth';
 
-import MatchingPage from '../MatchingPage';
+// import MatchingPage from '../MatchingPage';
 import Explore from '../Explore';
 import MyCourses from '../MyCourses';
 import Profile from '../Profile';
 import Home from './Home';
 
-const Tab = createMaterialBottomTabNavigator();
+import MatchingPage from '../MatchingPage';
 
+const Tab = createMaterialBottomTabNavigator();
 
 const TabNavigation = () => {
   const { colors } = useTheme();
@@ -55,12 +56,13 @@ const TabNavigation = () => {
         }}
       />
 
-{role !== 'Startupreneur' && (
+      {role !== 'Startupreneur' && (
         <Tab.Screen
-          name="MatchingPage"
+          name="startupMatching"
           component={MatchingPage}
           options={{
             tabBarLabel: 'Matchmaking',
+
             tabBarIcon: ({ color }) => (
               <MaterialCommunityIcons
                 name="puzzle-outline"

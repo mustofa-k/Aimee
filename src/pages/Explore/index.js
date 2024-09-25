@@ -24,7 +24,6 @@ const POSTS = posts.map((post) => {
   };
 });
 
-
 const Search = () => {
   const { colors } = useTheme();
   return (
@@ -66,14 +65,16 @@ const Explore = ({ navigation }) => {
   const SHARINGSANTAII = sharingSantaii?.map((doc) => {
     return createVid(doc.id, doc.title, doc.description);
   });
-  
+
   useEffect(() => {
-    const dbRef = collection(db, "SharingSantaii");
-  
-    const q = query(dbRef, orderBy("title", "asc"));
-  
+    const dbRef = collection(db, 'SharingSantaii');
+
+    const q = query(dbRef, orderBy('title', 'asc'));
+
     const unsubscribe = onSnapshot(q, (querySnapshot) => {
-        setSharingSantaii(querySnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+      setSharingSantaii(
+        querySnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id }))
+      );
     });
     return unsubscribe;
   }, []);
@@ -83,24 +84,28 @@ const Explore = ({ navigation }) => {
   });
 
   useEffect(() => {
-    const dbRef = collection(db, "SeminarWorkshop");
-  
-    const q = query(dbRef, orderBy("title", "asc"));
-  
+    const dbRef = collection(db, 'SeminarWorkshop');
+
+    const q = query(dbRef, orderBy('title', 'asc'));
+
     const unsubscribe = onSnapshot(q, (querySnapshot) => {
-        setReySummit(querySnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+      setReySummit(
+        querySnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id }))
+      );
     });
-  
+
     return unsubscribe;
   }, []);
 
   useEffect(() => {
-    const dbRef = collection(db, "OnlineClass");
-  
-    const q = query(dbRef, orderBy("title", "asc"));
-  
+    const dbRef = collection(db, 'OnlineClass');
+
+    const q = query(dbRef, orderBy('title', 'asc'));
+
     const unsubscribe = onSnapshot(q, (querySnapshot) => {
-        setOnlineClass(querySnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+      setOnlineClass(
+        querySnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id }))
+      );
     });
     return unsubscribe;
   }, []);

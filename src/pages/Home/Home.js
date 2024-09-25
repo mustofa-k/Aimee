@@ -18,16 +18,15 @@ import HorizontalMenu from '../../views/Home/HorizontalMenu';
 import { collection, onSnapshot, orderBy, query } from 'firebase/firestore';
 import { db } from '../../../firebase';
 
-
 const MENU = [
   {
-    id: '1',
+    yt: '1',
     title: 'Program',
     link: 'Program',
     icon: 'chip',
   },
   {
-    id: '2',
+    yt: '2',
     title: 'Mentor',
     link: 'Mentor',
     icon: 'account-tie',
@@ -44,13 +43,7 @@ const MENU = [
     link: 'Mitra',
     icon: 'handshake',
   },
-  //{
-    //id: '5',
-    //title: 'Matchmaking',
-    //link: 'Matchmaking',
-    //icon: 'puzzle',
-  //},
-]
+];
 
 const BANNER = [
   {
@@ -89,7 +82,6 @@ const POSTS = posts.map((post) => {
     type: 'WEBSITE',
   };
 });
-
 
 const TopBox = () => {
   const { colors } = useTheme();
@@ -137,67 +129,64 @@ const Search = () => {
 };
 
 const Home = ({ navigation }) => {
-  const {role} = useAuth();
+  const { role } = useAuth();
   const { colors } = useTheme();
   const [sharingSantaii, setSharingSantaii] = useState([]);
 
-  const menuHome = role === 'Startupreneur' ? [
-    {
-      id: '1',
-      title: 'Program',
-      link: 'Program',
-      icon: 'chip',
-    },
-    {
-      id: '2',
-      title: 'Mentor',
-      link: 'Mentor',
-      icon: 'account-tie',
-    },
-    {
-      id: '3',
-      title: 'Startup',
-      link: 'Startup',
-      icon: 'rocket',
-    },
-    {
-      id: '4',
-      title: 'Mitra',
-      link: 'Mitra',
-      icon: 'handshake',
-    }
-  ] : [
-    {
-      id: '1',
-      title: 'Program',
-      link: 'Program',
-      icon: 'chip',
-    },
-    {
-      id: '2',
-      title: 'Mentor',
-      link: 'Mentor',
-      icon: 'account-tie',
-    },
-    {
-      id: '3',
-      title: 'Startup',
-      link: 'Startup',
-      icon: 'rocket',
-    },
-    {
-      id: '4',
-      title: 'Mitra',
-      link: 'Mitra',
-      icon: 'handshake',
-    },
-   // {
-      //id: '5',
-      //title: 'Matchmaking',
-      //link: 'Matchmaking',
-      //icon: 'puzzle',
-    //},
-  ];
+  const menuHome =
+    role === 'Startupreneur'
+      ? [
+          {
+            id: '1',
+            title: 'Program',
+            link: 'Program',
+            icon: 'chip',
+          },
+          {
+            id: '2',
+            title: 'Mentor',
+            link: 'Mentor',
+            icon: 'account-tie',
+          },
+          {
+            id: '3',
+            title: 'Startup',
+            link: 'Startup',
+            icon: 'rocket',
+          },
+          {
+            id: '4',
+            title: 'Mitra',
+            link: 'Mitra',
+            icon: 'handshake',
+          },
+        ]
+      : [
+          {
+            id: '1',
+            title: 'Program',
+            link: 'Program',
+            icon: 'chip',
+          },
+          {
+            id: '2',
+            title: 'Mentor',
+            link: 'Mentor',
+            icon: 'account-tie',
+          },
+          {
+            id: '3',
+            title: 'Startup',
+            link: 'Startup',
+            icon: 'rocket',
+          },
+          {
+            id: '4',
+            title: 'Mitra',
+            link: 'Mitra',
+            icon: 'handshake',
+          },
+        ];
 
   const createVid = (id, title, description) => {
     return {
@@ -211,18 +200,21 @@ const Home = ({ navigation }) => {
   };
 
   useEffect(() => {
-    const dbRef = collection(db, "SharingSantaii");
-  
-    const q = query(dbRef, orderBy("title", "asc"));
-  
+    const dbRef = collection(db, 'SharingSantaii');
+
+    // Urutkan berdasarkan field `create_at` secara descending
+    const q = query(dbRef, orderBy('create_at', 'desc'));
+
     const unsubscribe = onSnapshot(q, (querySnapshot) => {
-        setSharingSantaii(querySnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+      setSharingSantaii(
+        querySnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id }))
+      );
     });
     return unsubscribe;
   }, []);
 
   const SHARINGSANTAII = sharingSantaii?.map((doc) => {
-    return createVid(doc.id, doc.title, doc.description);
+    return createVid(doc.idyt, doc.title, doc.description);
   });
 
   const SECTIONS = [
@@ -230,10 +222,6 @@ const Home = ({ navigation }) => {
       title: 'TopBox',
       data: [],
     },
-    // {
-    //   title: 'Search',
-    //   data: [],
-    // },
     {
       title: 'Banner',
       data: BANNER,
@@ -335,6 +323,7 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 8,
     borderTopRightRadius: 8,
     bottom: 16,
+
     marginBottom: -56,
   },
 });
